@@ -1,3 +1,5 @@
+import os
+from datetime import date
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
@@ -9,12 +11,8 @@ import utilities as utils
 url = "https://mops.twse.com.tw/mops/web/t05sr01_1"
 driver = webdriver.Chrome()
 config = utils.read_config()
-company_code = config.get('company_code')
-company_name = config.get('company_name')
-key_word = config.get('key_word')
-publish_date = config.get('publish_date')
-publish_time = config.get('publish_time')
-config_element_list = [company_code, company_name, key_word, publish_date, publish_time]
+config_element_list = [config.get('company_code'), config.get('company_name'), config.get('key_word'),
+                       config.get('publish_date'), config.get('publish_time')]
 
 
 def driver_click(locator):
@@ -25,19 +23,25 @@ def driver_click(locator):
 
 
 def get_company_news():
+    """Get company news.
+    :return: The company news.
+    """
     driver.get(url)
+    driver.maximize_window()
     rows = driver.find_elements(By.CSS_SELECTOR, ".odd, .even")
-
+    all_results = []
+    desktop_path = utils.get_os_specific_path('')
     try:
+        print("| Start initial search result |")
         for row in rows[1:]:
             cells = row.find_elements(By.TAG_NAME, "td")
             matched_elements = []
+            row_data = []
 
             for element in config_element_list:
                 if element == "default":
                     matched_elements.append(True)
                 else:
-                    # Check if the element matches any cell's text value
                     found = False
                     for cell in cells:
                         if element == cell.text:
@@ -45,23 +49,37 @@ def get_company_news():
                             break
                     matched_elements.append(found)
 
-            # If all elements in config_element_list are matched, print the row's data
             if all(matched_elements):
                 for cell in cells:
-                    print(cell.text, end="\t")
-                print()
+                    row_data.append(cell.text)
+                all_results.append(row_data)
+
+        # Print the results to the console
+        print("="*110 + f"\n")
+        print("| Result |\n")
+        for result in all_results:
+            print("\t".join(result))
+
+        # Save the results to a CSV file with date and number of records in the file name
+        today_date = date.today().strftime("%Y-%m-%d")
+        folder_name = os.path.join("OTC_Company_Info", today_date)
+        folder_path = os.path.join(desktop_path, folder_name)
+        utils.create_folder_if_not_exists(folder_path)
+        utils.save_search_results_to_csv(all_results, folder_path)
+
     except IndexError:
-        print("System error, please check if the data is correct.")
+        print("="*110 + "\n")
+        print("System error, please check if the data is correct")
         time.sleep(10)
     finally:
-        # Close the webdriver after processing
-        print("Initial result has been printed, Now getting detailed information...")
+        print("Initial result has been printed, Now getting detailed information\n")
+        print("="*110)
         driver.quit()
 
 
-def get_detail_info():
-    """Get detail information of the search result."""
-
+# def get_detail_info():
+#     """Get detail information of the search result."""
+#
 
 if __name__ == '__main__':
     get_company_news()
