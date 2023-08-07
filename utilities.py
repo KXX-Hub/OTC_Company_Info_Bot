@@ -13,10 +13,8 @@ def config_file_generator():
     """Generate the template of config file"""
     with open('config.yml', 'w', encoding="utf8") as f:
         f.write("""# | OTC_Company_Info_Bot                 |
-# | Made by KXX (MIT License)            |
-# ++--------------------------------++
-# | This is the config file for the bot. |
-# | Please fill the config file before   |
+# | Made by KXX                          |
+# ++------------------------------------++
 # Key word that you want to search for.
 key_word : "default"
 # Company code that you want to search for.
@@ -27,6 +25,11 @@ company_name : "default"
 publish_date : "default"
 # The time that you want to search for.
 publish_time : "default"
+#------------------------------------
+# The folder name that you want to save the file.
+folder_name : "OTC_Company_Info"
+
+
 """
                 )
     sys.exit()
@@ -51,7 +54,8 @@ def read_config():
                 'company_code': data['company_code'],
                 'company_name': data['company_name'],
                 'publish_date': data['publish_date'],
-                'publish_time': data['publish_time']
+                'publish_time': data['publish_time'],
+                'folder_name': data['folder_name']
             }
             return config
     except (KeyError, TypeError):
@@ -67,10 +71,10 @@ def get_os_specific_path(file_name):
     :return: The OS specific path.
     """
     if platform.system() == "Windows":
-        print("|           Windows           |")
+        print("\n|           Windows           |")
         return os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop', file_name)
     elif platform.system() == "Darwin":  # macOS
-        print("|           macOS             |")
+        print("\n|           macOS             |")
         return os.path.join(os.path.join(os.environ['HOME']), 'Desktop', file_name)
     else:
         raise OSError("| Unsupported operating system |")
@@ -80,10 +84,15 @@ def create_folder_if_not_exists(folder_path):
     """Create a folder if it does not exist.
     :param folder_path: The path to the folder.
     """
+    config = read_config()
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
-        print("- There is no folder named 'search_results' on your desktop.Creating one...")
-        print(f"- Folder created: {folder_path}")
+        print("=" * 110)
+        print(f"\n- There is no folder named {config.get('folder_name')} on your desktop.Creating one...")
+        print(f"- Folder created: {folder_path}\n")
+    else:
+        print("=" * 110)
+        print(f"\n- Files will be saved to: {folder_path}\n")
 
 
 def output_to_csv(data, file_path):
@@ -99,8 +108,8 @@ def output_to_csv(data, file_path):
         for row in data[:-1]:
             csv_writer.writerow(row)
 
-    print("="*110 + f"\n")
-    print(f"Results saved to: {file_path}")
+    print(f"Results saved to: {file_path}\n")
+    print("=" * 110+"\n")
 
 
 def save_search_results_to_csv(all_results, folder_path):
@@ -138,8 +147,8 @@ def save_search_results_to_csv(all_results, folder_path):
 
         # Compare the existing date and record count with today's date and the current number of records
         if existing_date == date.today() and existing_records >= num_records:
-            print(f"File is already up to date"
-                  f"="*110 + f"\n")
+            print("- File is already up to date\n")
+            print(f"=" * 110 + f"\n")
             return
     # Save the new search results to a new file or overwrite the existing file
     output_to_csv(all_results, csv_file_path)

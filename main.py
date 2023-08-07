@@ -12,7 +12,7 @@ url = "https://mops.twse.com.tw/mops/web/t05sr01_1"
 driver = webdriver.Chrome()
 config = utils.read_config()
 config_element_list = [config.get('company_code'), config.get('company_name'), config.get('key_word'),
-                       config.get('publish_date'), config.get('publish_time')]
+                       config.get('publish_date'), config.get('publish_time'), ]
 
 
 def driver_click(locator):
@@ -32,7 +32,7 @@ def get_company_news():
     all_results = []
     desktop_path = utils.get_os_specific_path('')
     try:
-        print("| Start initial search result |")
+        print("| Start initial search result |\n")
         for row in rows[1:]:
             cells = row.find_elements(By.TAG_NAME, "td")
             matched_elements = []
@@ -55,31 +55,34 @@ def get_company_news():
                 all_results.append(row_data)
 
         # Print the results to the console
-        print("="*110 + f"\n")
+        print("=" * 110 + f"\n")
         print("| Result |\n")
         for result in all_results:
             print("\t".join(result))
 
         # Save the results to a CSV file with date and number of records in the file name
         today_date = date.today().strftime("%Y-%m-%d")
-        folder_name = os.path.join("OTC_Company_Info", today_date)
+        folder_name = os.path.join(config.get('folder_name'), today_date)
         folder_path = os.path.join(desktop_path, folder_name)
         utils.create_folder_if_not_exists(folder_path)
         utils.save_search_results_to_csv(all_results, folder_path)
 
     except IndexError:
-        print("="*110 + "\n")
+        print("=" * 110 + "\n")
         print("System error, please check if the data is correct")
         time.sleep(10)
     finally:
         print("Initial result has been printed, Now getting detailed information\n")
-        print("="*110)
+        print("=" * 110)
         driver.quit()
 
 
-# def get_detail_info():
-#     """Get detail information of the search result."""
-#
+def get_detail_info_page():
+    """Get detail information Page
+    :return: The detail information.
+    """
+    all_results = []
+
 
 if __name__ == '__main__':
     get_company_news()
