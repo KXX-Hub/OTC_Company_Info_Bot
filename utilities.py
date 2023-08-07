@@ -15,21 +15,31 @@ def config_file_generator():
         f.write("""# | OTC_Company_Info_Bot                 |
 # | Made by KXX                          |
 # ++------------------------------------++
+
+# |  *For Searching*  |
+
 # Key word that you want to search for.
-key_word : "default"
+key_word: "default"
+
 # Company code that you want to search for.
-company_code : "default"
+company_code: "default"
+
 # Company name that you want to search for.
-company_name : "default"
+company_name: "default"
+
 # The date that you want to search for.
-publish_date : "default"
+publish_date: "default"
+
 # The time that you want to search for.
-publish_time : "default"
+publish_time: "default"
+
 #------------------------------------
+
+# |  *For Saving*  |
+
 # The folder name that you want to save the file.
-folder_name : "OTC_Company_Info"
-
-
+# default: OTC_Company_Info
+folder_name: "OTC_Company_Info"
 """
                 )
     sys.exit()
