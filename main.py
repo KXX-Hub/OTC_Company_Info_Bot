@@ -11,7 +11,7 @@ import utilities as utils
 url = "https://mops.twse.com.tw/mops/web/t05sr01_1"
 driver = webdriver.Chrome()
 config = utils.read_config()
-config_element_list = [config.get('company_code'), config.get('company_name'), config.get('key_word'),
+config_element_list = [config.get('company_code'), config.get('company_name'),
                        config.get('publish_date'), config.get('publish_time'), ]
 
 
@@ -54,7 +54,7 @@ def search_results_by_config(rows, element_list):
     return all_results
 
 
-def getting_initialize_search_result():
+def get_initialize_search_result():
     """Get initialize search result.
     :return: The filtered search results.
     """
@@ -64,6 +64,11 @@ def getting_initialize_search_result():
     desktop_path = utils.get_os_specific_path('')
     try:
         print("| Start getting initialize search result |\n")
+        if all(element == "default" for element in config_element_list):
+            print("\n- search all...\n")
+        else:
+            non_default_elements = [element for element in config_element_list if element != "default"]
+            print("- search elements:", non_default_elements)
         all_results = search_results_by_config(rows, config_element_list)
         # Print the results to the console
         print("=" * 110 + f"\n")
@@ -88,12 +93,11 @@ def getting_initialize_search_result():
         driver.quit()
 
 
-def get_detail_info_page():  # TODO finish this function
+def get_detail_info_page():
     """Get detail information Page
     :return: The detail information.
     """
-    all_results = []
 
 
 if __name__ == '__main__':
-    getting_initialize_search_result()
+    get_initialize_search_result()

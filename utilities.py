@@ -18,9 +18,6 @@ def config_file_generator():
 
 # |  *For Searching*  |
 
-# Key word that you want to search for.
-key_word: "default"
-
 # Company code that you want to search for.
 company_code: "default"
 
@@ -28,9 +25,11 @@ company_code: "default"
 company_name: "default"
 
 # The date that you want to search for.
+#format: YYYY/MM/DD
 publish_date: "default"
 
 # The time that you want to search for.
+#format: HH:MM:SS
 publish_time: "default"
 
 #------------------------------------
@@ -60,7 +59,6 @@ def read_config():
         with open('config.yml', 'r', encoding="utf8") as f:
             data = yaml.load(f, Loader=SafeLoader)
             config = {
-                'key_word': data['key_word'],
                 'company_code': data['company_code'],
                 'company_name': data['company_name'],
                 'publish_date': data['publish_date'],
@@ -128,7 +126,7 @@ def save_search_results_to_csv(all_results, folder_path):
     :param folder_path: The path to the folder where the CSV file will be saved.
     """
     config = read_config()
-    config_element_list = [config.get('company_code'), config.get('company_name'), config.get('key_word'),
+    config_element_list = [config.get('company_code'), config.get('company_name'),
                            config.get('publish_date'), config.get('publish_time')]
 
     today_date = date.today().strftime("%Y-%m-%d")
@@ -148,17 +146,20 @@ def save_search_results_to_csv(all_results, folder_path):
     if os.path.exists(csv_file_path):
         # Read the existing file's name and extract the date and record count from it
         existing_file_name = os.path.basename(csv_file_path)
-        existing_date_str, existing_records_str = existing_file_name.split('_total')
-        existing_records_str = existing_records_str.split('_')[0]
+        split_result = existing_file_name.split('_total')
+        if len(split_result) == 2:
+            existing_date_str, existing_records_str = split_result
+            existing_records_str = existing_records_str.split('_')[0]
 
-        # Convert the extracted date and record count to their respective types
-        existing_date = date.fromisoformat(existing_date_str)
-        existing_records = int(existing_records_str)
+            # Convert the extracted date and record count to their respective types
+            existing_date = date.fromisoformat(existing_date_str)
+            existing_records = int(existing_records_str)
 
-        # Compare the existing date and record count with today's date and the current number of records
-        if existing_date == date.today() and existing_records >= num_records:
-            print("- File is already up to date\n")
-            print(f"=" * 110 + f"\n")
-            return
+            # Compare the existing date and record count with today's date and the current number of records
+            if existing_date == date.today() and existing_records >= num_records:
+                print("- File is already up to date\n")
+                print(f"=" * 110 + f"\n")
+                return
+
     # Save the new search results to a new file or overwrite the existing file
     output_to_csv(all_results, csv_file_path)
