@@ -81,10 +81,10 @@ def get_os_specific_path(file_name):
     :return: The OS specific path.
     """
     if platform.system() == "Windows":
-        print("\n|           Windows           |")
+        print("\n|                 Windows                |")
         return os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop', file_name)
     elif platform.system() == "Darwin":  # macOS
-        print("\n|           macOS             |")
+        print("\n|                 macOS                  |")
         return os.path.join(os.path.join(os.environ['HOME']), 'Desktop', file_name)
     else:
         raise OSError("| Unsupported operating system |")
