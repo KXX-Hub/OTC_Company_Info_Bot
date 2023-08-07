@@ -22,38 +22,49 @@ def driver_click(locator):
     WebDriverWait(driver, 10).until(ec.presence_of_element_located(locator)).click()
 
 
-def get_company_news():
-    """Get company news.
-    :return: The company news.
+def search_results_by_config(rows, element_list):
+    """
+    Process search results and return the filtered data.
+    :param rows: The list of rows containing search results.
+    :param element_list: The list of elements to match in the search results.
+    :return: The filtered search results.
+    """
+    all_results = []
+    for row in rows[1:]:
+        cells = row.find_elements(By.TAG_NAME, "td")
+        matched_elements = []
+        row_data = []
+
+        for element in element_list:
+            if element == "default":
+                matched_elements.append(True)
+            else:
+                found = False
+                for cell in cells:
+                    if element == cell.text:
+                        found = True
+                        break
+                matched_elements.append(found)
+
+        if all(matched_elements):
+            for cell in cells:
+                row_data.append(cell.text)
+            all_results.append(row_data)
+
+    return all_results
+
+
+def getting_initialize_search_result():
+    """Get initialize search result.
+    :return: The filtered search results.
     """
     driver.get(url)
     driver.maximize_window()
     rows = driver.find_elements(By.CSS_SELECTOR, ".odd, .even")
-    all_results = []
     desktop_path = utils.get_os_specific_path('')
     try:
-        print("| Start initial search result |\n")
-        for row in rows[1:]:
-            cells = row.find_elements(By.TAG_NAME, "td")
-            matched_elements = []
-            row_data = []
-
-            for element in config_element_list:
-                if element == "default":
-                    matched_elements.append(True)
-                else:
-                    found = False
-                    for cell in cells:
-                        if element == cell.text:
-                            found = True
-                            break
-                    matched_elements.append(found)
-
-            if all(matched_elements):
-                for cell in cells:
-                    row_data.append(cell.text)
-                all_results.append(row_data)
-
+        print("| Start getting initialize search result |\n")
+        all_results = search_results_by_config(rows, config_element_list)
         # Print the results to the console
         print("=" * 110 + f"\n")
         print("| Result |\n")
@@ -77,7 +88,7 @@ def get_company_news():
         driver.quit()
 
 
-def get_detail_info_page():
+def get_detail_info_page():  # TODO finish this function
     """Get detail information Page
     :return: The detail information.
     """
@@ -85,4 +96,4 @@ def get_detail_info_page():
 
 
 if __name__ == '__main__':
-    get_company_news()
+    getting_initialize_search_result()
