@@ -5,7 +5,6 @@ from selenium.webdriver.common.by import By
 import time
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
-
 import utilities as utils
 
 url = "https://mops.twse.com.tw/mops/web/t05sr01_1"
@@ -16,8 +15,8 @@ config_element_list = [config.get('company_code'), config.get('company_name'),
 
 
 def driver_click(locator):
-    """Click element.
-    :param locator: Locator of element.
+    """Click the element.
+    :param locator: The locator of the element.
     """
     WebDriverWait(driver, 10).until(ec.presence_of_element_located(locator)).click()
 
@@ -65,10 +64,10 @@ def get_initialize_search_result():
     try:
         print("| Start getting initialize search result |\n")
         if all(element == "default" for element in config_element_list):
-            print("\n- search all...\n")
+            print("\n- Searching all results...\n")
         else:
             non_default_elements = [element for element in config_element_list if element != "default"]
-            print("- search elements:", non_default_elements)
+            print("- Searching result for following elements:", non_default_elements)
         all_results = search_results_by_config(rows, config_element_list)
         # Print the results to the console
         print("=" * 110 + f"\n")

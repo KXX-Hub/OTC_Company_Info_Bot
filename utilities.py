@@ -113,7 +113,7 @@ def output_to_csv(data, file_path):
         csv_writer.writerow(['公司代碼', '公司簡稱', '發言日期', '發言時間', '主旨'])
 
         # Write data rows (exclude the last row)
-        for row in data[:-1]:
+        for row in data:
             csv_writer.writerow(row)
 
     print(f"Results saved to: {file_path}\n")
