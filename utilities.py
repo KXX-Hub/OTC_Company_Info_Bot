@@ -117,10 +117,11 @@ def output_to_csv(data, file_path):
             csv_writer.writerow(row)
 
     print(f"Results saved to: {file_path}\n")
-    print("=" * 110+"\n")
+    print("=" * 110 + "\n")
 
 
-def save_search_results_to_csv(all_results, folder_path):
+
+def save_results_to_csv(all_results, folder_path):
     """Save the search results to a CSV file.
     :param all_results: The search results.
     :param folder_path: The path to the folder where the CSV file will be saved.
